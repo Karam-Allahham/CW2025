@@ -1,0 +1,14 @@
+COMP2042 Coursework
+
+Name: Karam Allahham
+Student ID: 20702950
+Github repository: https://github.com/Karam-Allahham/CW2025.git
+
+------
+
+# Overview
+
+This project is a fork of the given Tetris re0implementation for the COMP2042 coursework. 
+
+My submission aims to restructure the codebase for improved clarity and maintainability, introduce gameplay features, incorporate unit tests, and deliver necessary
+documentation (Javadoc and Design diagram) along with a brief demo.
