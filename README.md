@@ -15,4 +15,5 @@ documentation (Javadoc and Design diagram) along with a brief demo.
 
 #Maintenance
 
-Refactor: extract BoardRenderer and InputHandler from GuiController
+Refactor: extract BoardRenderer and InputHandler from GuiController which improves SRP and simplifies testing
+Refactor: extract GameLoop from GuiController to separate timing responsibilities from UI code which improves SRP and simplifies testing
