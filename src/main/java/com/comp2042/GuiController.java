@@ -24,6 +24,9 @@ import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import com.comp2042.core.GameLoop;
+
+
 
 
 public class GuiController implements Initializable {
@@ -43,7 +46,7 @@ public class GuiController implements Initializable {
     private GameOverPanel gameOverPanel;
 
     private InputEventListener eventListener;
-    private Timeline timeLine;
+    private GameLoop gameLoop;
     private final BooleanProperty isPause = new SimpleBooleanProperty();
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
@@ -87,20 +90,18 @@ public class GuiController implements Initializable {
             });
         }
 
-        timeLine = new Timeline(new KeyFrame(
-                Duration.millis(400),
-                ae -> {
-                    DownData downData = eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.THREAD));
-                    if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
-                        NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
-                        groupNotification.getChildren().add(notificationPanel);
-                        notificationPanel.showScore(groupNotification.getChildren());
-                    }
-                    renderer.refreshPreview(downData.getViewData());
-                }
-        ));
-        timeLine.setCycleCount(Timeline.INDEFINITE);
-        timeLine.play();
+        gameLoop = new GameLoop(() -> {
+            DownData downData = eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.THREAD));
+            if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
+                NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
+                groupNotification.getChildren().add(notificationPanel);
+                notificationPanel.showScore(groupNotification.getChildren());
+            }
+            renderer.refreshPreview(downData.getViewData());
+        }, 400);
+
+        gameLoop.start();
+
     }
 
     public void refreshBrick(ViewData brick) {
@@ -125,17 +126,17 @@ public class GuiController implements Initializable {
     }
 
     public void gameOver() {
-        timeLine.stop();
+        if (gameLoop != null) gameLoop.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
     }
 
     public void newGame(ActionEvent actionEvent) {
-        timeLine.stop();
+        if (gameLoop != null) gameLoop.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
         gamePanel.requestFocus();
-        timeLine.play();
+        if (gameLoop != null) gameLoop.start();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
