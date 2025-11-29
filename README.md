@@ -19,7 +19,14 @@ Refactor: extract BoardRenderer and InputHandler from GuiController which improv
 
 Refactor: extract GameLoop from GuiController to separate timing responsibilities from UI code which improves SRP and simplifies testing
 
-Refactor: Pause button now toggles game state
+Fix: Pause button now toggles game state
 - Add pause check to game loop to stop processing when paused
 - Implement pauseGame() to toggle isPause state
 - Add P key binding in InputHandler to trigger pause
+
+Fix: Implement score display functionality
+- Add scorelabel FXML field to GuiController
+- Implement bindScore() to bind score property to label
+- Add Label element to gameLayout.fxml with scoreClass styling
+
+- 
