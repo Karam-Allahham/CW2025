@@ -19,6 +19,7 @@ import javafx.scene.shape.Rectangle;
 
 import javafx.scene.text.Font;
 import javafx.scene.effect.Reflection;
+import javafx.scene.control.Label;
 
 import javafx.util.Duration;
 
@@ -44,6 +45,9 @@ public class GuiController implements Initializable {
 
     @FXML
     private GameOverPanel gameOverPanel;
+
+    @FXML
+    private Label scoreLabel;
 
     private InputEventListener eventListener;
     private GameLoop gameLoop;
@@ -128,6 +132,7 @@ public class GuiController implements Initializable {
     }
 
     public void bindScore(IntegerProperty integerProperty) {
+        scoreLabel.textProperty().bind(integerProperty.asString());
     }
 
     public void gameOver() {
