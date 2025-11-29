@@ -29,4 +29,5 @@ Fix: Implement score display functionality
 - Implement bindScore() to bind score property to label
 - Add Label element to gameLayout.fxml with scoreClass styling
 
-- 
+Fix: Added missing lower Y bound check in MatrixOperations
+- Added targetY >= 0 check to prevent negative Y values from bypassing bounds validation in checkOutOfBound method
