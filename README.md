@@ -31,3 +31,6 @@ Fix: Implement score display functionality
 
 Fix: Added missing lower Y bound check in MatrixOperations
 - Added targetY >= 0 check to prevent negative Y values from bypassing bounds validation in checkOutOfBound method
+
+Fix: Correct brick spawn position to top of board
+- Changed brick Y spwan position from 10 to 0 to make sure it spawns at the top instead of halfway down
