@@ -37,3 +37,6 @@ Fix: Correct brick spawn position to top of board
 
 Fix: Refresh the brick preview when starting a new game
 - Added call to refresh the brick preview after creating a new game so it no shows the new brick instead of the old one
+
+Fix: Removing broken InputHandler recreation in setEventListener
+- Removed code that created new InputHandler without setting up callbacks, which would break keyboard input handling
