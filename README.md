@@ -34,3 +34,6 @@ Fix: Added missing lower Y bound check in MatrixOperations
 
 Fix: Correct brick spawn position to top of board
 - Changed brick Y spwan position from 10 to 0 to make sure it spawns at the top instead of halfway down
+
+Fix: Refresh the brick preview when starting a new game
+- Added call to refresh the brick preview after creating a new game so it no shows the new brick instead of the old one
