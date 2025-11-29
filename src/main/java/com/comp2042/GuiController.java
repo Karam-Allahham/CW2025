@@ -74,6 +74,7 @@ public class GuiController implements Initializable {
 
         if (inputHandler == null) {
             inputHandler = new InputHandler(gamePanel, eventListener);
+            inputHandler.setPauseCallback(() -> pauseGame(null));
             inputHandler.setPreviewConsumer(viewData -> {
                 if (!isPause.getValue()) renderer.refreshPreview(viewData);
             });
@@ -91,6 +92,10 @@ public class GuiController implements Initializable {
         }
 
         gameLoop = new GameLoop(() -> {
+            // Don't process game tick if paused or game is over
+            if (isPause.getValue() || isGameOver.getValue()) {
+                return;
+            }
             DownData downData = eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.THREAD));
             if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
                 NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
@@ -142,6 +147,14 @@ public class GuiController implements Initializable {
     }
 
     public void pauseGame(ActionEvent actionEvent) {
+        // Don't allow pause if game is over
+        if (isGameOver.getValue()) {
+            gamePanel.requestFocus();
+            return;
+        }
+
+        // Toggle pause state
+        isPause.setValue(!isPause.getValue());
         gamePanel.requestFocus();
     }
 }

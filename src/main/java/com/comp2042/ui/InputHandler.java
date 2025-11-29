@@ -20,6 +20,7 @@ public class InputHandler {
 
     private Consumer<ViewData> previewConsumer;     // left/right/rotate results
     private Consumer<DownData> downConsumer;        // moveDown results
+    private Runnable pauseCallback;              // pause toggle callback
 
     public InputHandler(Node root, InputEventListener eventListener) {
         this.root = root;
@@ -37,6 +38,10 @@ public class InputHandler {
 
     public void setDownConsumer(Consumer<DownData> downConsumer) {
         this.downConsumer = downConsumer;
+    }
+
+    public void setPauseCallback(Runnable pauseCallback) {
+        this.pauseCallback = pauseCallback;
     }
 
     private void handleKey(KeyEvent keyEvent) {
@@ -70,8 +75,19 @@ public class InputHandler {
             return;
         }
 
+        if (code == KeyCode.P) {
+            if (pauseCallback != null) pauseCallback.run();
+            keyEvent.consume();
+            return;
+        }
+
         if (code == KeyCode.N) {
             eventListener.createNewGame();
+            keyEvent.consume();
+        }
+
+        if (code == KeyCode.P) {
+            // This requires adding a pause callback - see Option B instead
             keyEvent.consume();
         }
     }
