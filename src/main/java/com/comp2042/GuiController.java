@@ -145,6 +145,10 @@ public class GuiController implements Initializable {
         if (gameLoop != null) gameLoop.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
+        ViewData newBrickData = eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER));
+        if (renderer != null) {
+            renderer.refreshPreview(newBrickData);
+        }
         gamePanel.requestFocus();
         if (gameLoop != null) gameLoop.start();
         isPause.setValue(Boolean.FALSE);
