@@ -126,9 +126,6 @@ public class GuiController implements Initializable {
 
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
-        if (inputHandler != null) {
-            inputHandler = new InputHandler(gamePanel, eventListener);
-        }
     }
 
     public void bindScore(IntegerProperty integerProperty) {

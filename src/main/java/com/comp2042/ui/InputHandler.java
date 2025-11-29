@@ -86,9 +86,5 @@ public class InputHandler {
             keyEvent.consume();
         }
 
-        if (code == KeyCode.P) {
-            // This requires adding a pause callback - see Option B instead
-            keyEvent.consume();
-        }
     }
 }
