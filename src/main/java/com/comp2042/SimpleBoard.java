@@ -91,7 +91,7 @@ public class SimpleBoard implements Board {
 
     @Override
     public int[][] getBoardMatrix() {
-        return currentGameMatrix;
+        return MatrixOperations.copy(currentGameMatrix);
     }
 
     @Override
