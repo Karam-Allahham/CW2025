@@ -18,7 +18,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 
 import javafx.scene.text.Font;
-import javafx.scene.effect.Reflection;
 import javafx.scene.control.Label;
 
 import javafx.util.Duration;
@@ -32,7 +31,6 @@ import com.comp2042.core.GameLoop;
 
 public class GuiController implements Initializable {
 
-    private static final int BRICK_SIZE = 20;
 
     @FXML
     private GridPane gamePanel;
@@ -64,10 +62,6 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
         gameOverPanel.setVisible(false);
 
-        final Reflection reflection = new Reflection();
-        reflection.setFraction(0.8);
-        reflection.setTopOpacity(0.9);
-        reflection.setTopOffset(-12);
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
