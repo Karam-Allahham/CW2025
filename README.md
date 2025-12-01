@@ -40,3 +40,6 @@ Fix: Refresh the brick preview when starting a new game
 
 Fix: Removing broken InputHandler recreation in setEventListener
 - Removed code that created new InputHandler without setting up callbacks, which would break keyboard input handling
+
+Fix: Return copy of matrix board to preserve encapsulation
+- getBoardMatrix() now returns a defensive copy instead of the direct reference which prevents external modification of game state
