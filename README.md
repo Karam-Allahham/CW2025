@@ -46,6 +46,11 @@ Fix: Remove unused code from GuiController
 - Remove unused Reflection effect that was never applied
 - Remove unused Reflection import
 
+Refactor: Extract magic numbers to named constants
+- Added SPAWN_X, SPAWN_Y in SimpleBoard
+- Added BOARD_ROWS, BOARD_COLS in GameController
+- Added GAME_TICK_MS in GuiController
+- Added BASE_SCORE_PER_LINE in MatrixOperations
 
 
 
