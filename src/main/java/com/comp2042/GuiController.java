@@ -54,6 +54,7 @@ public class GuiController implements Initializable {
 
     private BoardRenderer renderer;
     private InputHandler inputHandler;
+    private static final int GAME_TICK_MS = 400;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -101,7 +102,7 @@ public class GuiController implements Initializable {
                 notificationPanel.showScore(groupNotification.getChildren());
             }
             renderer.refreshPreview(downData.getViewData());
-        }, 400);
+        }, GAME_TICK_MS);
 
         gameLoop.start();
 

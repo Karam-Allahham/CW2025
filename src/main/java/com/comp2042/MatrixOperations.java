@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 public class MatrixOperations {
 
 
-    //We don't want to instantiate this utility class
+
+    private static final int BASE_SCORE_PER_LINE = 50;
+
     private MatrixOperations(){
 
     }
@@ -88,7 +90,7 @@ public class MatrixOperations {
                 break;
             }
         }
-        int scoreBonus = 50 * clearedRows.size() * clearedRows.size();
+        int scoreBonus = BASE_SCORE_PER_LINE * clearedRows.size() * clearedRows.size();
         return new ClearRow(clearedRows.size(), tmp, scoreBonus);
     }
 
