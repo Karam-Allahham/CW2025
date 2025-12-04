@@ -56,7 +56,13 @@ Refactor: Implement State Pattern for game states
 - Create GameState interface with canProcessGameTick() and canAcceptInput()
 - Added PlayingState, PausedState and GameOverState implementations
 - Replaced isPause and isGameOver boolean flags with state pattern
-- Improves code organization and extensibility 
+- Improves code organization and extensibility
+
+Refactor: Implement Factory Pattern for brick creation
+- Created BrickFactory class with createBrick() and createRandomBrick()
+- Add BrickType enum for type-safe brick identification
+- Update RandomBrickGenerator to use BrickFactory
+- Centralizes brick instantiation for better maintainability
 
 
 
