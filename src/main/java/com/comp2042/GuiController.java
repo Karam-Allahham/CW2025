@@ -2,11 +2,13 @@ package com.comp2042;
 
 import com.comp2042.ui.BoardRenderer;
 import com.comp2042.ui.InputHandler;
+import com.comp2042.state.GameState;
+import com.comp2042.state.PlayingState;
+import com.comp2042.state.PausedState;
+import com.comp2042.state.GameOverState;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.IntegerProperty;
 
 import javafx.event.ActionEvent;
@@ -49,8 +51,7 @@ public class GuiController implements Initializable {
 
     private InputEventListener eventListener;
     private GameLoop gameLoop;
-    private final BooleanProperty isPause = new SimpleBooleanProperty();
-    private final BooleanProperty isGameOver = new SimpleBooleanProperty();
+    private GameState currentState = new PlayingState();
 
     private BoardRenderer renderer;
     private InputHandler inputHandler;
@@ -75,10 +76,10 @@ public class GuiController implements Initializable {
             inputHandler = new InputHandler(gamePanel, eventListener);
             inputHandler.setPauseCallback(() -> pauseGame(null));
             inputHandler.setPreviewConsumer(viewData -> {
-                if (!isPause.getValue()) renderer.refreshPreview(viewData);
+                if (currentState.canAcceptInput()) renderer.refreshPreview(viewData);
             });
             inputHandler.setDownConsumer(downData -> {
-                if (!isPause.getValue()) {
+                if (currentState.canAcceptInput()) {
                     if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
                         NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
                         groupNotification.getChildren().add(notificationPanel);
@@ -91,8 +92,8 @@ public class GuiController implements Initializable {
         }
 
         gameLoop = new GameLoop(() -> {
-            // Don't process game tick if paused or game is over
-            if (isPause.getValue() || isGameOver.getValue()) {
+
+            if (!currentState.canProcessGameTick()) {
                 return;
             }
             DownData downData = eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.THREAD));
@@ -109,7 +110,7 @@ public class GuiController implements Initializable {
     }
 
     public void refreshBrick(ViewData brick) {
-        if (isPause.getValue() == Boolean.FALSE) {
+        if (currentState.canAcceptInput()) {
             // delegate preview refresh to renderer
             if (renderer != null) renderer.refreshPreview(brick);
         }
@@ -130,7 +131,7 @@ public class GuiController implements Initializable {
     public void gameOver() {
         if (gameLoop != null) gameLoop.stop();
         gameOverPanel.setVisible(true);
-        isGameOver.setValue(Boolean.TRUE);
+        currentState = new GameOverState();
     }
 
     public void newGame(ActionEvent actionEvent) {
@@ -143,19 +144,21 @@ public class GuiController implements Initializable {
         }
         gamePanel.requestFocus();
         if (gameLoop != null) gameLoop.start();
-        isPause.setValue(Boolean.FALSE);
-        isGameOver.setValue(Boolean.FALSE);
+        currentState = new PlayingState();
     }
 
     public void pauseGame(ActionEvent actionEvent) {
         // Don't allow pause if game is over
-        if (isGameOver.getValue()) {
+        if (currentState instanceof GameOverState) {
             gamePanel.requestFocus();
             return;
         }
 
-        // Toggle pause state
-        isPause.setValue(!isPause.getValue());
+        if (currentState instanceof PlayingState) {
+            currentState = new PausedState();
+        } else if (currentState instanceof PausedState) {
+            currentState = new PlayingState();
+        }
         gamePanel.requestFocus();
     }
 }
