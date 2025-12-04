@@ -52,6 +52,12 @@ Refactor: Extract magic numbers to named constants
 - Added GAME_TICK_MS in GuiController
 - Added BASE_SCORE_PER_LINE in MatrixOperations
 
+Refactor: Implement State Pattern for game states
+- Create GameState interface with canProcessGameTick() and canAcceptInput()
+- Added PlayingState, PausedState and GameOverState implementations
+- Replaced isPause and isGameOver boolean flags with state pattern
+- Improves code organization and extensibility 
+
 
 
 
