@@ -1,32 +1,32 @@
-package com.comp2042;
+package com.comp2042.controller;
 
-import com.comp2042.ui.BoardRenderer;
-import com.comp2042.ui.InputHandler;
+import com.comp2042.view.BoardRenderer;
+import com.comp2042.input.InputHandler;
+import com.comp2042.view.ViewData;
+import com.comp2042.view.GameOverPanel;
+import com.comp2042.view.NotificationPanel;
+import com.comp2042.event.DownData;
+import com.comp2042.event.MoveEvent;
+import com.comp2042.event.EventType;
+import com.comp2042.event.EventSource;
+import com.comp2042.event.InputEventListener;
 import com.comp2042.state.GameState;
 import com.comp2042.state.PlayingState;
 import com.comp2042.state.PausedState;
 import com.comp2042.state.GameOverState;
+import com.comp2042.core.GameLoop;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-
 import javafx.scene.Group;
 import javafx.scene.layout.GridPane;
-import javafx.scene.shape.Rectangle;
-
 import javafx.scene.text.Font;
 import javafx.scene.control.Label;
 
-import javafx.util.Duration;
-
 import java.net.URL;
 import java.util.ResourceBundle;
-import com.comp2042.core.GameLoop;
 
 
 
