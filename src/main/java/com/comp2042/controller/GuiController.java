@@ -15,6 +15,7 @@ import com.comp2042.state.PlayingState;
 import com.comp2042.state.PausedState;
 import com.comp2042.state.GameOverState;
 import com.comp2042.core.GameLoop;
+import com.comp2042.model.ClearRow;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.event.ActionEvent;
@@ -80,11 +81,7 @@ public class GuiController implements Initializable {
             });
             inputHandler.setDownConsumer(downData -> {
                 if (currentState.canAcceptInput()) {
-                    if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
-                        NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
-                        groupNotification.getChildren().add(notificationPanel);
-                        notificationPanel.showScore(groupNotification.getChildren());
-                    }
+                    showScoreNotification(downData.getClearRow());
                     renderer.refreshPreview(downData.getViewData());
                 }
                 gamePanel.requestFocus();
@@ -97,11 +94,7 @@ public class GuiController implements Initializable {
                 return;
             }
             DownData downData = eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.THREAD));
-            if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
-                NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
-                groupNotification.getChildren().add(notificationPanel);
-                notificationPanel.showScore(groupNotification.getChildren());
-            }
+            showScoreNotification(downData.getClearRow());
             renderer.refreshPreview(downData.getViewData());
         }, GAME_TICK_MS);
 
@@ -118,6 +111,14 @@ public class GuiController implements Initializable {
 
     public void refreshGameBackground(int[][] board) {
         if (renderer != null) renderer.refreshBoard(board);
+    }
+
+    private void showScoreNotification(ClearRow clearRow) {
+        if (clearRow != null && clearRow.getLinesRemoved() > 0) {
+            NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
+            groupNotification.getChildren().add(notificationPanel);
+            notificationPanel.showScore(groupNotification.getChildren());
+        }
     }
 
     public void setEventListener(InputEventListener eventListener) {
