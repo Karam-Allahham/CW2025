@@ -64,6 +64,15 @@ Refactor: Implement Factory Pattern for brick creation
 - Update RandomBrickGenerator to use BrickFactory
 - Centralizes brick instantiation for better maintainability
 
+Refactor: Completed package reorganization
+- controller / GameController, GuiController
+- model / Board, SimpleBoard, Score, ClearRow, BrickRotator, NextShapeInfo
+- view / ViewData, BoardRenderer, GameOverPanel, NotificationPanel
+- event / MoveEvent, EventType, EventSource, DownData, InputEventListener
+- input / InputHandler
+- util / MatrixOperations
+- Updated all imports and FXML references
+
 
 
 
