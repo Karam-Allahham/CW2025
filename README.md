@@ -86,3 +86,10 @@ Test 2: Added unit tests for BrickFactory class
 Test 3: Added unit tests for MatrixOperations class
 
 Test 4: Added unit tests for State Pattern implementation
+
+#Additional features
+
+Feature: Display game state and added New Game button
+- Added statelabel to show current game state on screen
+- Added New Game button to UI
+- State updates when pausing, resuming, game over and new game
