@@ -50,6 +50,9 @@ public class GuiController implements Initializable {
     @FXML
     private Label scoreLabel;
 
+    @FXML
+    private Label stateLabel;
+
     private InputEventListener eventListener;
     private GameLoop gameLoop;
     private GameState currentState = new PlayingState();
@@ -133,6 +136,7 @@ public class GuiController implements Initializable {
         if (gameLoop != null) gameLoop.stop();
         gameOverPanel.setVisible(true);
         currentState = new GameOverState();
+        updateStateDisplay();
     }
 
     public void newGame(ActionEvent actionEvent) {
@@ -143,9 +147,11 @@ public class GuiController implements Initializable {
         if (renderer != null) {
             renderer.refreshPreview(newBrickData);
         }
+
         gamePanel.requestFocus();
         if (gameLoop != null) gameLoop.start();
         currentState = new PlayingState();
+        updateStateDisplay();
     }
 
     public void pauseGame(ActionEvent actionEvent) {
@@ -160,6 +166,14 @@ public class GuiController implements Initializable {
         } else if (currentState instanceof PausedState) {
             currentState = new PlayingState();
         }
+        updateStateDisplay();
         gamePanel.requestFocus();
+    }
+
+
+    private void updateStateDisplay() {
+        if (stateLabel != null) {
+            stateLabel.setText(currentState.getStateName());
+        }
     }
 }
