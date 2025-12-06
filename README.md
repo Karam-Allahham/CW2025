@@ -72,14 +72,17 @@ Refactor: Completed package reorganization
 - input / InputHandler
 - util / MatrixOperations
 - Updated all imports and FXML references
-
-
-
-
-
-
-
-
-
+  
 Fix: Return copy of matrix board to preserve encapsulation
 - getBoardMatrix() now returns a defensive copy instead of the direct reference which prevents external modification of game state
+
+
+#Tests
+
+Test 1: Added unit tests for Score class
+
+Test 2: Added unit tests for BrickFactory class
+
+Test 3: Added unit tests for MatrixOperations class
+
+Test 4: Added unit tests for State Pattern implementation
