@@ -114,4 +114,8 @@ public class GameController implements InputEventListener {
     public Level getLevel() {
         return level;
     }
+
+    public int[][] getBoardMatrix() {
+        return board.getBoardMatrix();
+    }
 }

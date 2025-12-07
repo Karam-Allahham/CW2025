@@ -142,9 +142,39 @@ public class GuiController implements Initializable {
 
     private void showScoreNotification(ClearRow clearRow) {
         if (clearRow != null && clearRow.getLinesRemoved() > 0) {
+
+            int[] rows = clearRow.getClearedRows();
+            flashRowsWhite(rows, true);
+
+
+            javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
+            pause.setOnFinished(e -> {
+
+                if (renderer != null && eventListener != null) {
+                    renderer.refreshBoard(((com.comp2042.controller.GameController) eventListener).getBoardMatrix());
+                }
+            });
+            pause.play();
+
             NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
             groupNotification.getChildren().add(notificationPanel);
             notificationPanel.showScore(groupNotification.getChildren());
+        }
+    }
+
+    private void flashRowsWhite(int[] rows, boolean flash) {
+        for (int row : rows) {
+            int displayRow = row - 2;  // Adjust for hidden top rows
+            if (displayRow >= 0) {
+                for (var node : gamePanel.getChildren()) {
+                    Integer rowIndex = GridPane.getRowIndex(node);
+                    if (rowIndex != null && rowIndex == displayRow && node instanceof javafx.scene.shape.Rectangle rect) {
+                        if (flash) {
+                            rect.setFill(javafx.scene.paint.Color.WHITE);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -271,6 +301,7 @@ public class GuiController implements Initializable {
             }
         }
     }
+
 
     private javafx.scene.paint.Paint getColorForValue(int value) {
         return switch (value) {
