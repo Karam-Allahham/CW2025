@@ -100,7 +100,11 @@ public class SimpleBoard implements Board {
 
     @Override
     public ViewData getViewData() {
-        return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), getGhostY(), brickGenerator.getNextBrick().getShapeMatrix().get(0));
+        Brick[] previewBricks = brickGenerator.getPreviewBricks();
+        int[][] nextShape = previewBricks[0] != null ? previewBricks[0].getShapeMatrix().get(0) : new int[4][4];
+        int[][] secondShape = previewBricks[1] != null ? previewBricks[1].getShapeMatrix().get(0) : new int[4][4];
+
+        return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), getGhostY(), nextShape, secondShape);
     }
 
     @Override

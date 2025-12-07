@@ -67,6 +67,12 @@ public class GuiController implements Initializable {
     @FXML
     private VBox pauseOverlay;
 
+    @FXML
+    private GridPane nextPanel1;
+
+    @FXML
+    private GridPane nextPanel2;
+
     private InputEventListener eventListener;
     private GameLoop gameLoop;
     private GameState currentState = new PlayingState();
@@ -94,7 +100,10 @@ public class GuiController implements Initializable {
             inputHandler = new InputHandler(gamePanel, eventListener);
             inputHandler.setPauseCallback(() -> pauseGame(null));
             inputHandler.setPreviewConsumer(viewData -> {
-                if (currentState.canAcceptInput()) renderer.refreshPreview(viewData);
+                if (currentState.canAcceptInput()) {
+                    renderer.refreshPreview(viewData);
+                    updateNextPiecesPreview(viewData.getNextBrickData(), viewData.getSecondNextBrickData());
+                }
             });
             inputHandler.setDownConsumer(downData -> {
                 if (currentState.canAcceptInput()) {
@@ -113,6 +122,7 @@ public class GuiController implements Initializable {
             DownData downData = eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.THREAD));
             showScoreNotification(downData.getClearRow());
             renderer.refreshPreview(downData.getViewData());
+            updateNextPiecesPreview(downData.getViewData().getNextBrickData(), downData.getViewData().getSecondNextBrickData());
         }, GAME_TICK_MS);
 
         gameLoop.start();
@@ -235,5 +245,43 @@ public class GuiController implements Initializable {
             e.printStackTrace();
             javafx.application.Platform.exit();
         }
+    }
+
+    public void updateNextPiecesPreview(int[][] next1, int[][] next2) {
+        renderPreviewPanel(nextPanel1, next1);
+        renderPreviewPanel(nextPanel2, next2);
+    }
+
+    private void renderPreviewPanel(GridPane panel, int[][] shape) {
+        if (panel == null || shape == null) return;
+
+        panel.getChildren().clear();
+
+        for (int i = 0; i < shape.length; i++) {
+            for (int j = 0; j < shape[i].length; j++) {
+                javafx.scene.shape.Rectangle rect = new javafx.scene.shape.Rectangle(12, 12);
+                if (shape[i][j] != 0) {
+                    rect.setFill(getColorForValue(shape[i][j]));
+                    rect.setArcHeight(4);
+                    rect.setArcWidth(4);
+                } else {
+                    rect.setFill(javafx.scene.paint.Color.TRANSPARENT);
+                }
+                panel.add(rect, j, i);
+            }
+        }
+    }
+
+    private javafx.scene.paint.Paint getColorForValue(int value) {
+        return switch (value) {
+            case 1 -> javafx.scene.paint.Color.AQUA;
+            case 2 -> javafx.scene.paint.Color.BLUEVIOLET;
+            case 3 -> javafx.scene.paint.Color.DARKGREEN;
+            case 4 -> javafx.scene.paint.Color.YELLOW;
+            case 5 -> javafx.scene.paint.Color.RED;
+            case 6 -> javafx.scene.paint.Color.BEIGE;
+            case 7 -> javafx.scene.paint.Color.BURLYWOOD;
+            default -> javafx.scene.paint.Color.WHITE;
+        };
     }
 }

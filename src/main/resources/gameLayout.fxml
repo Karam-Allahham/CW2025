@@ -21,6 +21,10 @@
     <Label fx:id="stateLabel" text="Playing" styleClass="scoreClass" layoutX="20" layoutY="10"/>
     <Button text="New Game" onAction="#newGame" layoutX="20" layoutY="470"/>
 
+    <Label text="NEXT" styleClass="scoreClass" layoutX="230" layoutY="100"/>
+    <GridPane fx:id="nextPanel1" layoutX="235" layoutY="125" hgap="1" vgap="1"/>
+    <GridPane fx:id="nextPanel2" layoutX="235" layoutY="210" hgap="1" vgap="1"/>
+
     <VBox fx:id="pauseOverlay" layoutX="60" layoutY="150" spacing="15"
           visible="false" style="-fx-background-color: rgba(0,0,0,0.8); -fx-padding: 30; -fx-background-radius: 10;">
         <Label text="PAUSED" style="-fx-font-size: 36; -fx-text-fill: white; -fx-font-weight: bold;"/>

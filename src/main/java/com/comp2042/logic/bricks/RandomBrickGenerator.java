@@ -8,17 +8,30 @@ public class RandomBrickGenerator implements BrickGenerator {
 
     private final Deque<Brick> nextBricks = new ArrayDeque<>();
 
+    private static final int PREVIEW_COUNT = 3;
+
     public RandomBrickGenerator() {
-        nextBricks.add(BrickFactory.createRandomBrick());
-        nextBricks.add(BrickFactory.createRandomBrick());
+        for (int i = 0; i < PREVIEW_COUNT; i++) {
+            nextBricks.add(BrickFactory.createRandomBrick());
+        }
     }
 
     @Override
     public Brick getBrick() {
-        if (nextBricks.size() <= 1) {
+        while (nextBricks.size() < PREVIEW_COUNT) {
             nextBricks.add(BrickFactory.createRandomBrick());
         }
         return nextBricks.poll();
+    }
+
+    public Brick[] getPreviewBricks() {
+        Brick[] preview = new Brick[2];
+        int i = 0;
+        for (Brick brick : nextBricks) {
+            if (i >= 2) break;
+            preview[i++] = brick;
+        }
+        return preview;
     }
 
     @Override
