@@ -28,4 +28,6 @@ public interface Board {
     void newGame();
 
     void hardDrop();
+
+    int getGhostY();
 }

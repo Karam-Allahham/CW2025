@@ -14,6 +14,7 @@ public class BoardRenderer {
     private final GridPane brickPanel;
     private Rectangle[][] displayMatrix;
     private Rectangle[][] previewRectangles;
+    private Rectangle[][] ghostRectangles;
 
     public BoardRenderer(GridPane gamePanel, GridPane brickPanel) {
         this.gamePanel = gamePanel;
@@ -56,6 +57,7 @@ public class BoardRenderer {
                 setRectangle(previewRectangles[i][j], brick.getBrickData()[i][j]);
             }
         }
+        renderGhost(brick);
     }
 
 
@@ -78,6 +80,49 @@ public class BoardRenderer {
         rectangle.setFill(fillFor(color));
         rectangle.setArcHeight(9);
         rectangle.setArcWidth(9);
+    }
+
+    public void renderGhost(ViewData brick) {
+        // Clear previous ghost
+        if (ghostRectangles != null) {
+            for (Rectangle[] row : ghostRectangles) {
+                for (Rectangle rect : row) {
+                    if (rect != null) {
+                        gamePanel.getChildren().remove(rect);
+                    }
+                }
+            }
+        }
+
+        int[][] brickData = brick.getBrickData();
+        ghostRectangles = new Rectangle[brickData.length][brickData[0].length];
+
+        int ghostY = brick.getGhostY();
+        int xPos = brick.getxPosition();
+
+
+        if (ghostY <= brick.getyPosition()) {
+            return;
+        }
+
+        for (int i = 0; i < brickData.length; i++) {
+            for (int j = 0; j < brickData[i].length; j++) {
+                if (brickData[i][j] != 0) {
+                    int displayY = ghostY + i - 2;
+                    int displayX = xPos + j;
+
+                    if (displayY >= 0 && displayY < 23 && displayX >= 0 && displayX < 10) {
+                        Rectangle ghost = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                        ghost.setFill(Color.GRAY);
+                        ghost.setOpacity(0.3);
+                        ghost.setArcHeight(9);
+                        ghost.setArcWidth(9);
+                        ghostRectangles[i][j] = ghost;
+                        gamePanel.add(ghost, displayX, displayY);
+                    }
+                }
+            }
+        }
     }
 
     private Paint fillFor(int i) {

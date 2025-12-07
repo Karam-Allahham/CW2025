@@ -100,7 +100,7 @@ public class SimpleBoard implements Board {
 
     @Override
     public ViewData getViewData() {
-        return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), brickGenerator.getNextBrick().getShapeMatrix().get(0));
+        return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), getGhostY(), brickGenerator.getNextBrick().getShapeMatrix().get(0));
     }
 
     @Override
@@ -134,5 +134,17 @@ public class SimpleBoard implements Board {
     public void hardDrop() {
         while (moveBrickDown()) {
         }
+    }
+
+    public int getGhostY() {
+        int ghostY = (int) currentOffset.getY();
+
+        // Keep moving down until we hit something
+        while (!MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(),
+                (int) currentOffset.getX(), ghostY + 1)) {
+            ghostY++;
+        }
+
+        return ghostY;
     }
 }

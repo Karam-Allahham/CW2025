@@ -28,6 +28,7 @@ import javafx.scene.control.Label;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.scene.layout.VBox;
 
 
 
@@ -58,6 +59,9 @@ public class GuiController implements Initializable {
 
     @FXML
     private Label levelLabel;
+
+    @FXML
+    private VBox pauseOverlay;
 
     private InputEventListener eventListener;
     private GameLoop gameLoop;
@@ -148,6 +152,7 @@ public class GuiController implements Initializable {
     public void newGame(ActionEvent actionEvent) {
         if (gameLoop != null) gameLoop.stop();
         gameOverPanel.setVisible(false);
+        if (pauseOverlay != null) pauseOverlay.setVisible(false);
         eventListener.createNewGame();
         ViewData newBrickData = eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER));
         if (renderer != null) {
@@ -169,8 +174,10 @@ public class GuiController implements Initializable {
 
         if (currentState instanceof PlayingState) {
             currentState = new PausedState();
+            if (pauseOverlay != null) pauseOverlay.setVisible(true);
         } else if (currentState instanceof PausedState) {
-            currentState = new PlayingState();
+            resumeGame(null);
+            return;
         }
         updateStateDisplay();
         gamePanel.requestFocus();
@@ -199,5 +206,19 @@ public class GuiController implements Initializable {
         levelLabel.textProperty().bind(
                 javafx.beans.binding.Bindings.concat("Level: ", levelProperty.asString())
         );
+    }
+
+    public void resumeGame(ActionEvent actionEvent) {
+        if (currentState instanceof PausedState) {
+            currentState = new PlayingState();
+            if (pauseOverlay != null) pauseOverlay.setVisible(false);
+            updateStateDisplay();
+        }
+        gamePanel.requestFocus();
+    }
+
+    public void exitToHome(ActionEvent actionEvent) {
+        if (gameLoop != null) gameLoop.stop();
+        javafx.application.Platform.exit();
     }
 }
