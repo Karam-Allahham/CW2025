@@ -16,6 +16,7 @@
     </BorderPane>
     <Label fx:id="scoreLabel" text="0" styleClass="scoreClass" layoutX="230" layoutY="10"/>
     <Label fx:id="highScoreLabel" text="Best: 0" styleClass="scoreClass" layoutX="230" layoutY="40"/>
+    <Label fx:id="levelLabel" text="Level: 1" styleClass="scoreClass" layoutX="230" layoutY="70"/>
     <Label fx:id="stateLabel" text="Playing" styleClass="scoreClass" layoutX="20" layoutY="10"/>
     <Button text="New Game" onAction="#newGame" layoutX="20" layoutY="470"/>
 

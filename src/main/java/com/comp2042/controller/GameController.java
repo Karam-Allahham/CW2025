@@ -9,6 +9,7 @@ import com.comp2042.event.EventSource;
 import com.comp2042.event.InputEventListener;
 import com.comp2042.view.ViewData;
 import com.comp2042.model.HighScore;
+import com.comp2042.model.Level;
 
 public class GameController implements InputEventListener {
 
@@ -18,6 +19,7 @@ public class GameController implements InputEventListener {
     private final HighScore highScore = new HighScore();
 
     private final GuiController viewGuiController;
+    private final Level level = new Level();
 
     public GameController(GuiController c) {
         viewGuiController = c;
@@ -26,6 +28,7 @@ public class GameController implements InputEventListener {
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
         viewGuiController.bindHighScore(highScore.highScoreProperty());
+        viewGuiController.bindLevel(level.levelProperty());
     }
 
     @Override
@@ -38,6 +41,9 @@ public class GameController implements InputEventListener {
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
                 highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
+                if (level.addLines(clearRow.getLinesRemoved())) {
+                    viewGuiController.updateGameSpeed(level.getSpeedForCurrentLevel());
+                }
             }
             if (board.createNewBrick()) {
                 highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
@@ -76,6 +82,8 @@ public class GameController implements InputEventListener {
     @Override
     public void createNewGame() {
         board.newGame();
+        level.reset();
+        viewGuiController.updateGameSpeed(level.getSpeedForCurrentLevel());
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
     }
 
@@ -87,6 +95,9 @@ public class GameController implements InputEventListener {
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
             highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
+            if (level.addLines(clearRow.getLinesRemoved())) {
+                viewGuiController.updateGameSpeed(level.getSpeedForCurrentLevel());
+            }
         }
         if (board.createNewBrick()) {
             highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
@@ -98,5 +109,9 @@ public class GameController implements InputEventListener {
 
     public HighScore getHighScore() {
         return highScore;
+    }
+
+    public Level getLevel() {
+        return level;
     }
 }
