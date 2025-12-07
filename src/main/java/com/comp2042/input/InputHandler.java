@@ -75,6 +75,13 @@ public class InputHandler {
             return;
         }
 
+        if (code == KeyCode.SPACE) {
+            DownData d = eventListener.onHardDropEvent(new MoveEvent(EventType.DOWN, EventSource.USER));
+            if (downConsumer != null) downConsumer.accept(d);
+            keyEvent.consume();
+            return;
+        }
+
         if (code == KeyCode.P) {
             if (pauseCallback != null) pauseCallback.run();
             keyEvent.consume();

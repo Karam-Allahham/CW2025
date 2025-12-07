@@ -127,5 +127,12 @@ public class SimpleBoard implements Board {
         currentGameMatrix = new int[width][height];
         score.reset();
         createNewBrick();
+
+    }
+
+    @Override
+    public void hardDrop() {
+        while (moveBrickDown()) {
+        }
     }
 }
