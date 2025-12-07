@@ -29,6 +29,10 @@ import javafx.scene.control.Label;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.scene.layout.VBox;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 
 
@@ -219,6 +223,17 @@ public class GuiController implements Initializable {
 
     public void exitToHome(ActionEvent actionEvent) {
         if (gameLoop != null) gameLoop.stop();
-        javafx.application.Platform.exit();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("homeScreen.fxml"));
+            Parent homeRoot = loader.load();
+
+            Stage stage = (Stage) gamePanel.getScene().getWindow();
+            Scene homeScene = new Scene(homeRoot, 300, 510);
+            stage.setScene(homeScene);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javafx.application.Platform.exit();
+        }
     }
 }
