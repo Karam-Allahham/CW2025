@@ -72,17 +72,45 @@ public class SimpleBoard implements Board {
         }
     }
 
+
     @Override
     public boolean rotateLeftBrick() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
         NextShapeInfo nextShape = brickRotator.getNextShape();
-        boolean conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
-        if (conflict) {
-            return false;
-        } else {
+        int[][] shape = nextShape.getShape();
+        int x = (int) currentOffset.getX();
+        int y = (int) currentOffset.getY();
+
+        if (!MatrixOperations.intersect(currentMatrix, shape, x, y)) {
             brickRotator.setCurrentShape(nextShape.getPosition());
             return true;
         }
+
+        if (!MatrixOperations.intersect(currentMatrix, shape, x + 1, y)) {
+            currentOffset = new Point(x + 1, y);
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        if (!MatrixOperations.intersect(currentMatrix, shape, x - 1, y)) {
+            currentOffset = new Point(x - 1, y);
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        if (!MatrixOperations.intersect(currentMatrix, shape, x, y - 1)) {
+            currentOffset = new Point(x, y - 1);
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        if (!MatrixOperations.intersect(currentMatrix, shape, x + 2, y)) {
+            currentOffset = new Point(x + 2, y);
+            brickRotator.setCurrentShape(nextShape.getPosition());
+            return true;
+        }
+
+        return false;
     }
 
     @Override
