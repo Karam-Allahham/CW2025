@@ -53,6 +53,9 @@ public class GuiController implements Initializable {
     @FXML
     private Label stateLabel;
 
+    @FXML
+    private Label highScoreLabel;
+
     private InputEventListener eventListener;
     private GameLoop gameLoop;
     private GameState currentState = new PlayingState();
@@ -175,5 +178,11 @@ public class GuiController implements Initializable {
         if (stateLabel != null) {
             stateLabel.setText(currentState.getStateName());
         }
+    }
+
+    public void bindHighScore(IntegerProperty highScoreProperty) {
+        highScoreLabel.textProperty().bind(
+                javafx.beans.binding.Bindings.concat("Best: ", highScoreProperty.asString())
+        );
     }
 }

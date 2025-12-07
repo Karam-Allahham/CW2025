@@ -8,12 +8,14 @@ import com.comp2042.event.MoveEvent;
 import com.comp2042.event.EventSource;
 import com.comp2042.event.InputEventListener;
 import com.comp2042.view.ViewData;
+import com.comp2042.model.HighScore;
 
 public class GameController implements InputEventListener {
 
     private static final int BOARD_ROWS = 25;
     private static final int BOARD_COLS = 10;
     private Board board = new SimpleBoard(BOARD_ROWS, BOARD_COLS);
+    private final HighScore highScore = new HighScore();
 
     private final GuiController viewGuiController;
 
@@ -23,6 +25,7 @@ public class GameController implements InputEventListener {
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
+        viewGuiController.bindHighScore(highScore.highScoreProperty());
     }
 
     @Override
@@ -34,8 +37,10 @@ public class GameController implements InputEventListener {
             clearRow = board.clearRows();
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
+                highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
             }
             if (board.createNewBrick()) {
+                highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
                 viewGuiController.gameOver();
             }
 
@@ -81,11 +86,17 @@ public class GameController implements InputEventListener {
         ClearRow clearRow = board.clearRows();
         if (clearRow.getLinesRemoved() > 0) {
             board.getScore().add(clearRow.getScoreBonus());
+            highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
         }
         if (board.createNewBrick()) {
+            highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
             viewGuiController.gameOver();
         }
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
         return new DownData(clearRow, board.getViewData());
+    }
+
+    public HighScore getHighScore() {
+        return highScore;
     }
 }
