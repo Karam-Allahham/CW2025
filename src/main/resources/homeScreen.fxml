@@ -13,7 +13,8 @@
     <VBox spacing="20" alignment="CENTER">
         <Label text="TETRIS" style="-fx-font-size: 48; -fx-text-fill: yellow; -fx-font-weight: bold;"/>
 
-        <Button text="Play" onAction="#startGame" prefWidth="150" styleClass="ipad-dark-grey"/>
+        <Button text="Classic Mode" onAction="#startClassicGame" prefWidth="150" styleClass="ipad-dark-grey"/>
+        <Button text="Sprint" onAction="#startSprintGame" prefWidth="150" styleClass="ipad-dark-grey"/>
         <Button text="High Score" onAction="#showHighScore" prefWidth="150" styleClass="ipad-dark-grey"/>
         <Button text="Exit" onAction="#exitGame" prefWidth="150" styleClass="ipad-dark-grey"/>
 

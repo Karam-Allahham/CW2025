@@ -71,10 +71,20 @@ public class BoardRenderer {
     }
 
     private void updatePreviewLocation(ViewData brick) {
-        double gamePanelActualX = gamePanel.localToScene(0, 0).getX() - brickPanel.getScene().getX();
-        double gamePanelActualY = gamePanel.localToScene(0, 0).getY() - brickPanel.getScene().getY();
-        brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+        javafx.geometry.Bounds gameBounds = gamePanel.localToScene(gamePanel.getBoundsInLocal());
+
+        javafx.geometry.Bounds brickParentBounds = brickPanel.getParent().localToScene(
+                brickPanel.getParent().getBoundsInLocal());
+        javafx.geometry.Point2D brickParentOrigin = brickPanel.getParent().localToScene(0, 0);
+
+        double offsetX = gameBounds.getMinX() - brickParentOrigin.getX();
+        double offsetY = gameBounds.getMinY() - brickParentOrigin.getY();
+
+        double x = offsetX + brick.getxPosition() * (BRICK_SIZE + brickPanel.getVgap());
+        double y = offsetY - 42 + (brick.getyPosition() - 2) * (BRICK_SIZE + brickPanel.getHgap());
+
+        brickPanel.setLayoutX(x);
+        brickPanel.setLayoutY(y);
     }
 
     private void setRectangle(Rectangle rectangle, int color) {

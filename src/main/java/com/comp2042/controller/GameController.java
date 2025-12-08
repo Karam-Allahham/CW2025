@@ -10,6 +10,7 @@ import com.comp2042.event.InputEventListener;
 import com.comp2042.view.ViewData;
 import com.comp2042.model.HighScore;
 import com.comp2042.model.Level;
+import com.comp2042.model.GameMode;
 
 public class GameController implements InputEventListener {
 
@@ -20,14 +21,26 @@ public class GameController implements InputEventListener {
 
     private final GuiController viewGuiController;
     private final Level level = new Level();
+    private final GameMode gameMode;
+    private static final int SPRINT_TARGET = 3;
 
     public GameController(GuiController c) {
+        this(c, GameMode.CLASSIC);
+    }
+
+    public GameController(GuiController c, GameMode mode) {
+        this.gameMode = mode;
         viewGuiController = c;
         board.createNewBrick();
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
         viewGuiController.bindHighScore(highScore.highScoreProperty());
+
+        if (gameMode == GameMode.SPRINT) {
+            viewGuiController.setSprintMode(SPRINT_TARGET);
+        }
+
         viewGuiController.bindLevel(level.levelProperty());
     }
 
@@ -43,6 +56,14 @@ public class GameController implements InputEventListener {
                 highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
                 if (level.addLines(clearRow.getLinesRemoved())) {
                     viewGuiController.updateGameSpeed(level.getSpeedForCurrentLevel());
+                }
+
+                if (gameMode == GameMode.SPRINT) {
+                    viewGuiController.updateSprintProgress(level.getLinesCleared(), SPRINT_TARGET);
+                    if (level.getLinesCleared() >= SPRINT_TARGET) {
+                        viewGuiController.gameWon();
+                        return new DownData(clearRow, board.getViewData());
+                    }
                 }
             }
             if (board.createNewBrick()) {
@@ -97,6 +118,14 @@ public class GameController implements InputEventListener {
             highScore.checkAndUpdate(board.getScore().scoreProperty().getValue());
             if (level.addLines(clearRow.getLinesRemoved())) {
                 viewGuiController.updateGameSpeed(level.getSpeedForCurrentLevel());
+            }
+
+            if (gameMode == GameMode.SPRINT) {
+                viewGuiController.updateSprintProgress(level.getLinesCleared(), SPRINT_TARGET);
+                if (level.getLinesCleared() >= SPRINT_TARGET) {
+                    viewGuiController.gameWon();
+                    return new DownData(clearRow, board.getViewData());
+                }
             }
         }
         if (board.createNewBrick()) {
