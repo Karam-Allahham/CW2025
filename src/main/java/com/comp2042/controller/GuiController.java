@@ -34,9 +34,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
-
-
+/**
+ * Controller for the game's graphical user interface.
+ * Manages UI components, rendering, input handling, game loop, and state transitions.
+ * Implements Initializable to set up the FXML-injected components.
+ */
 public class GuiController implements Initializable {
 
 
@@ -91,6 +93,13 @@ public class GuiController implements Initializable {
     private InputHandler inputHandler;
     private static final int GAME_TICK_MS = 400;
 
+    /**
+     * Initializes the GUI controller. Called automatically by JavaFX after FXML loading.
+     * Sets up fonts, focus handling, and initial visibility states.
+     * 
+     * @param location the location used to resolve relative paths, or null if unknown
+     * @param resources the resources used to localize the root object, or null if not localized
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
@@ -100,6 +109,13 @@ public class GuiController implements Initializable {
 
     }
 
+    /**
+     * Initializes the game view with the board matrix and initial brick data.
+     * Sets up the board renderer, input handler, and game loop.
+     * 
+     * @param boardMatrix the initial game board matrix
+     * @param brick the initial falling brick data
+     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         if (renderer == null) renderer = new BoardRenderer(gamePanel, brickPanel);
 
@@ -139,6 +155,11 @@ public class GuiController implements Initializable {
 
     }
 
+    /**
+     * Refreshes the display of the current falling brick.
+     * 
+     * @param brick the updated brick data to display
+     */
     public void refreshBrick(ViewData brick) {
         if (currentState.canAcceptInput()) {
             // delegate preview refresh to renderer
@@ -146,6 +167,11 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Refreshes the game board background display.
+     * 
+     * @param board the updated board matrix to render
+     */
     public void refreshGameBackground(int[][] board) {
         if (renderer != null) renderer.refreshBoard(board);
     }
@@ -188,14 +214,28 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Sets the input event listener to handle game logic events.
+     * 
+     * @param eventListener the InputEventListener to receive events
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
 
+    /**
+     * Binds the score label to the score property for automatic UI updates.
+     * 
+     * @param integerProperty the score property to bind
+     */
     public void bindScore(IntegerProperty integerProperty) {
         scoreLabel.textProperty().bind(integerProperty.asString());
     }
 
+    /**
+     * Handles the game over state. Stops the game loop and timer, displays the game over panel,
+     * and transitions to GameOverState.
+     */
     public void gameOver() {
         if (gameLoop != null) gameLoop.stop();
         if (sprintTimer != null) sprintTimer.stop();
@@ -204,6 +244,12 @@ public class GuiController implements Initializable {
         updateStateDisplay();
     }
 
+    /**
+     * Starts a new game. Resets the game loop, clears UI overlays, resets sprint mode if active,
+     * and initializes a new game through the event listener.
+     * 
+     * @param actionEvent the action event that triggered this method (from UI button)
+     */
     public void newGame(ActionEvent actionEvent) {
         if (gameLoop != null) gameLoop.stop();
         gameOverPanel.setVisible(false);
@@ -242,6 +288,12 @@ public class GuiController implements Initializable {
         updateStateDisplay();
     }
 
+    /**
+     * Toggles the pause state of the game. If playing, pauses the game.
+     * If paused, resumes the game. Does nothing if the game is over.
+     * 
+     * @param actionEvent the action event that triggered this method (from UI button or key press)
+     */
     public void pauseGame(ActionEvent actionEvent) {
         // Don't allow pause if game is over
         if (currentState instanceof GameOverState) {
@@ -267,22 +319,44 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Binds the high score label to the high score property for automatic UI updates.
+     * 
+     * @param highScoreProperty the high score property to bind
+     */
     public void bindHighScore(IntegerProperty highScoreProperty) {
         highScoreLabel.textProperty().bind(highScoreProperty.asString());
     }
 
+    /**
+     * Updates the game loop speed based on the current level.
+     * 
+     * @param speedMs the new speed in milliseconds (time between ticks)
+     */
     public void updateGameSpeed(int speedMs) {
         if (gameLoop != null) {
             gameLoop.setInterval(speedMs);
         }
     }
 
+    /**
+     * Binds the level label to the level property for automatic UI updates.
+     * Only binds if sprint mode is not active.
+     * 
+     * @param levelProperty the level property to bind
+     */
     public void bindLevel(IntegerProperty levelProperty) {
         if (sprintTarget == 0) {
             levelLabel.textProperty().bind(levelProperty.asString());
         }
     }
 
+    /**
+     * Resumes the game from paused state. Transitions from PausedState to PlayingState
+     * and hides the pause overlay.
+     * 
+     * @param actionEvent the action event that triggered this method (from UI button)
+     */
     public void resumeGame(ActionEvent actionEvent) {
         if (currentState instanceof PausedState) {
             currentState = new PlayingState();
@@ -292,6 +366,12 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Exits the game view and returns to the home screen.
+     * Stops the game loop and loads the home screen FXML.
+     * 
+     * @param actionEvent the action event that triggered this method (from UI button)
+     */
     public void exitToHome(ActionEvent actionEvent) {
         if (gameLoop != null) gameLoop.stop();
         try {
@@ -308,6 +388,12 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Updates the preview panels to show the next two upcoming bricks.
+     * 
+     * @param next1 the matrix representation of the first next brick
+     * @param next2 the matrix representation of the second next brick
+     */
     public void updateNextPiecesPreview(int[][] next1, int[][] next2) {
         renderPreviewPanel(nextPanel1, next1);
         renderPreviewPanel(nextPanel2, next2);
@@ -333,6 +419,12 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Sets up sprint mode with the specified target number of lines to clear.
+     * Hides high score display, shows timer, and displays sprint notification.
+     * 
+     * @param target the target number of lines to clear in sprint mode
+     */
     public void setSprintMode(int target) {
         System.out.println("setSprintMode called with target: " + target);
         this.sprintTarget = target;
@@ -396,12 +488,22 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Updates the sprint progress display showing lines cleared vs target.
+     * 
+     * @param linesCleared the number of lines cleared so far
+     * @param target the target number of lines to clear
+     */
     public void updateSprintProgress(int linesCleared, int target) {
         if (sprintTarget > 0 && levelLabel != null) {
             levelLabel.setText("Lines: " + linesCleared + "/" + target);
         }
     }
 
+    /**
+     * Handles the sprint mode win condition. Stops the game loop and timer,
+     * displays the win message with completion time, and transitions to GameOverState.
+     */
     public void gameWon() {
         if (gameLoop != null) gameLoop.stop();
         if (sprintTimer != null) sprintTimer.stop();

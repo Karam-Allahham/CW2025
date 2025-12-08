@@ -12,6 +12,12 @@ import com.comp2042.model.HighScore;
 import com.comp2042.model.Level;
 import com.comp2042.model.GameMode;
 
+/**
+ * Main controller that coordinates the game logic and view.
+ * Implements InputEventListener to handle player input events and manages
+ * the interaction between the game board, score, level, and GUI components.
+ * Supports both classic and sprint game modes.
+ */
 public class GameController implements InputEventListener {
 
     private static final int BOARD_ROWS = 25;
@@ -24,10 +30,22 @@ public class GameController implements InputEventListener {
     private final GameMode gameMode;
     private static final int SPRINT_TARGET = 3;
 
+    /**
+     * Constructs a GameController with default classic game mode.
+     * 
+     * @param c the GUI controller to coordinate with
+     */
     public GameController(GuiController c) {
         this(c, GameMode.CLASSIC);
     }
 
+    /**
+     * Constructs a GameController with the specified game mode.
+     * Initializes the board, sets up UI bindings, and configures sprint mode if applicable.
+     * 
+     * @param c the GUI controller to coordinate with
+     * @param mode the game mode to use (CLASSIC or SPRINT)
+     */
     public GameController(GuiController c, GameMode mode) {
         this.gameMode = mode;
         viewGuiController = c;
@@ -44,6 +62,14 @@ public class GameController implements InputEventListener {
         viewGuiController.bindLevel(level.levelProperty());
     }
 
+    /**
+     * {@inheritDoc}
+     * Handles the down movement event. Moves the brick down, merges it when blocked,
+     * clears rows, updates score and level, and checks for game over or sprint win conditions.
+     * 
+     * @param event the move event containing event type and source information
+     * @return DownData containing information about cleared rows and updated view data
+     */
     @Override
     public DownData onDownEvent(MoveEvent event) {
         boolean canMove = board.moveBrickDown();
@@ -81,25 +107,50 @@ public class GameController implements InputEventListener {
         return new DownData(clearRow, board.getViewData());
     }
 
+    /**
+     * {@inheritDoc}
+     * Handles the left movement event by moving the current brick left.
+     * 
+     * @param event the move event containing event type and source information
+     * @return ViewData containing the updated brick position and view information
+     */
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
         board.moveBrickLeft();
         return board.getViewData();
     }
 
+    /**
+     * {@inheritDoc}
+     * Handles the right movement event by moving the current brick right.
+     * 
+     * @param event the move event containing event type and source information
+     * @return ViewData containing the updated brick position and view information
+     */
     @Override
     public ViewData onRightEvent(MoveEvent event) {
         board.moveBrickRight();
         return board.getViewData();
     }
 
+    /**
+     * {@inheritDoc}
+     * Handles the rotation event by rotating the current brick counter-clockwise.
+     * 
+     * @param event the move event containing event type and source information
+     * @return ViewData containing the updated brick rotation and view information
+     */
     @Override
     public ViewData onRotateEvent(MoveEvent event) {
         board.rotateLeftBrick();
         return board.getViewData();
     }
 
-
+    /**
+     * {@inheritDoc}
+     * Resets the game to start a new game. Clears the board, resets the level,
+     * and updates the game speed.
+     */
     @Override
     public void createNewGame() {
         board.newGame();
@@ -108,6 +159,14 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
     }
 
+    /**
+     * {@inheritDoc}
+     * Handles the hard drop event. Instantly drops the brick to its lowest position,
+     * merges it, clears rows, and checks for game over or sprint win conditions.
+     * 
+     * @param event the move event containing event type and source information
+     * @return DownData containing information about cleared rows and updated view data
+     */
     @Override
     public DownData onHardDropEvent(MoveEvent event) {
         board.hardDrop();
@@ -136,14 +195,29 @@ public class GameController implements InputEventListener {
         return new DownData(clearRow, board.getViewData());
     }
 
+    /**
+     * Gets the HighScore instance for this game session.
+     * 
+     * @return the HighScore object
+     */
     public HighScore getHighScore() {
         return highScore;
     }
 
+    /**
+     * Gets the Level instance for this game session.
+     * 
+     * @return the Level object
+     */
     public Level getLevel() {
         return level;
     }
 
+    /**
+     * Gets the current state of the game board matrix.
+     * 
+     * @return a 2D array representing the board state
+     */
     public int[][] getBoardMatrix() {
         return board.getBoardMatrix();
     }

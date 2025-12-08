@@ -5,7 +5,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
-
+/**
+ * Renders the game board and falling bricks using JavaFX components.
+ * Manages the visual representation of the game board, current falling brick,
+ * ghost piece preview, and handles color mapping for different brick types.
+ */
 public class BoardRenderer {
 
     private static final int BRICK_SIZE = 20;
@@ -16,12 +20,24 @@ public class BoardRenderer {
     private Rectangle[][] previewRectangles;
     private Rectangle[][] ghostRectangles;
 
+    /**
+     * Constructs a BoardRenderer with the specified game and brick panels.
+     * 
+     * @param gamePanel the GridPane for rendering the game board
+     * @param brickPanel the GridPane for rendering the falling brick
+     */
     public BoardRenderer(GridPane gamePanel, GridPane brickPanel) {
         this.gamePanel = gamePanel;
         this.brickPanel = brickPanel;
     }
 
 
+    /**
+     * Initializes the game board display by creating rectangles for each cell.
+     * Only displays rows starting from index 2 (hides the top 2 rows used for spawning).
+     * 
+     * @param boardMatrix the initial game board matrix
+     */
     public void initBoard(int[][] boardMatrix) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
@@ -35,6 +51,12 @@ public class BoardRenderer {
     }
 
 
+    /**
+     * Initializes the preview display for the falling brick.
+     * Creates rectangles for the brick shape and positions it on the board.
+     * 
+     * @param brick the ViewData containing the initial brick information
+     */
     public void initPreview(ViewData brick) {
         previewRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
         for (int i = 0; i < brick.getBrickData().length; i++) {
@@ -49,6 +71,12 @@ public class BoardRenderer {
     }
 
 
+    /**
+     * Refreshes the preview display with updated brick data.
+     * Updates the brick's position, appearance, and renders the ghost piece.
+     * 
+     * @param brick the ViewData containing updated brick information
+     */
     public void refreshPreview(ViewData brick) {
         if (previewRectangles == null) return;
         updatePreviewLocation(brick);
@@ -61,6 +89,12 @@ public class BoardRenderer {
     }
 
 
+    /**
+     * Refreshes the game board display with the updated board matrix.
+     * Updates the colors of all cells based on the new board state.
+     * 
+     * @param board the updated game board matrix
+     */
     public void refreshBoard(int[][] board) {
         if (displayMatrix == null) return;
         for (int i = 2; i < board.length; i++) {
@@ -87,12 +121,25 @@ public class BoardRenderer {
         brickPanel.setLayoutY(y);
     }
 
+    /**
+     * Sets the fill color and styling for a rectangle based on the color value.
+     * 
+     * @param rectangle the rectangle to style
+     * @param color the color value (0 = transparent, 1-7 = different brick colors)
+     */
     private void setRectangle(Rectangle rectangle, int color) {
         rectangle.setFill(fillFor(color));
         rectangle.setArcHeight(9);
         rectangle.setArcWidth(9);
     }
 
+    /**
+     * Renders the ghost piece that shows where the current brick will land.
+     * Clears any previous ghost piece and creates a new semi-transparent ghost
+     * at the calculated landing position.
+     * 
+     * @param brick the ViewData containing brick and ghost position information
+     */
     public void renderGhost(ViewData brick) {
         // Clear previous ghost
         if (ghostRectangles != null) {
@@ -136,6 +183,12 @@ public class BoardRenderer {
         }
     }
 
+    /**
+     * Maps a color value to its corresponding JavaFX Paint color.
+     * 
+     * @param i the color value (0-7)
+     * @return the Paint color corresponding to the value
+     */
     private Paint fillFor(int i) {
         return switch (i) {
             case 0 -> Color.TRANSPARENT;
