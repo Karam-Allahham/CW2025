@@ -71,7 +71,8 @@ public class BoardRenderer {
     }
 
     private void updatePreviewLocation(ViewData brick) {
-        // Position the preview grid the same way original GuiController did
+        double gamePanelActualX = gamePanel.localToScene(0, 0).getX() - brickPanel.getScene().getX();
+        double gamePanelActualY = gamePanel.localToScene(0, 0).getY() - brickPanel.getScene().getY();
         brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
     }

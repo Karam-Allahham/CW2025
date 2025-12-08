@@ -73,6 +73,16 @@ public class GuiController implements Initializable {
     @FXML
     private GridPane nextPanel2;
 
+    @FXML
+    private Label sprintNotification;
+
+    @FXML
+    private Label timerLabel;
+
+    private int sprintTarget = 0;
+    private long sprintStartTime;
+    private javafx.animation.Timeline sprintTimer;
+
     private InputEventListener eventListener;
     private GameLoop gameLoop;
     private GameState currentState = new PlayingState();
@@ -188,6 +198,7 @@ public class GuiController implements Initializable {
 
     public void gameOver() {
         if (gameLoop != null) gameLoop.stop();
+        if (sprintTimer != null) sprintTimer.stop();
         gameOverPanel.setVisible(true);
         currentState = new GameOverState();
         updateStateDisplay();
@@ -197,6 +208,20 @@ public class GuiController implements Initializable {
         if (gameLoop != null) gameLoop.stop();
         gameOverPanel.setVisible(false);
         if (pauseOverlay != null) pauseOverlay.setVisible(false);
+
+        if (sprintTimer != null) {
+            sprintTimer.stop();
+            sprintTimer = null;
+        }
+        sprintTarget = 0;
+        if (timerLabel != null) timerLabel.setVisible(false);
+        if (sprintNotification != null) {
+            sprintNotification.setVisible(false);
+            sprintNotification.setStyle("-fx-font-size: 14; -fx-text-fill: yellow; -fx-font-weight: bold; -fx-background-color: rgba(0,0,0,0.8); -fx-padding: 10; -fx-background-radius: 5;");
+        }
+
+        if (highScoreLabel != null) highScoreLabel.setVisible(true);
+
         eventListener.createNewGame();
         ViewData newBrickData = eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER));
         if (renderer != null) {
@@ -206,6 +231,14 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
         if (gameLoop != null) gameLoop.start();
         currentState = new PlayingState();
+
+        if (sprintTimer != null) {
+            sprintTimer.stop();
+            sprintTimer = null;
+        }
+        sprintTarget = 0;
+        if (timerLabel != null) timerLabel.setVisible(false);
+        if (sprintNotification != null) sprintNotification.setVisible(false);
         updateStateDisplay();
     }
 
@@ -235,9 +268,7 @@ public class GuiController implements Initializable {
     }
 
     public void bindHighScore(IntegerProperty highScoreProperty) {
-        highScoreLabel.textProperty().bind(
-                javafx.beans.binding.Bindings.concat("Best: ", highScoreProperty.asString())
-        );
+        highScoreLabel.textProperty().bind(highScoreProperty.asString());
     }
 
     public void updateGameSpeed(int speedMs) {
@@ -247,9 +278,9 @@ public class GuiController implements Initializable {
     }
 
     public void bindLevel(IntegerProperty levelProperty) {
-        levelLabel.textProperty().bind(
-                javafx.beans.binding.Bindings.concat("Level: ", levelProperty.asString())
-        );
+        if (sprintTarget == 0) {
+            levelLabel.textProperty().bind(levelProperty.asString());
+        }
     }
 
     public void resumeGame(ActionEvent actionEvent) {
@@ -300,6 +331,98 @@ public class GuiController implements Initializable {
                 panel.add(rect, j, i);
             }
         }
+    }
+
+    public void setSprintMode(int target) {
+        System.out.println("setSprintMode called with target: " + target);
+        this.sprintTarget = target;
+
+
+        if (highScoreLabel != null) {
+            highScoreLabel.textProperty().unbind();
+            highScoreLabel.setVisible(false);
+        }
+
+
+        if (levelLabel != null) {
+            levelLabel.textProperty().unbind();
+            levelLabel.setText("Lines: 0/20");
+            levelLabel.setVisible(true);
+        }
+
+
+        if (timerLabel != null) {
+            timerLabel.setVisible(true);
+            timerLabel.toFront();
+        }
+
+
+        showSprintNotification(target);
+        startSprintTimer();
+    }
+
+    private void showSprintNotification(int target) {
+        javafx.application.Platform.runLater(() -> {
+            if (sprintNotification != null) {
+                sprintNotification.setText("Race to clear 40 lines!!!!");
+                sprintNotification.setVisible(true);
+                sprintNotification.toFront();
+
+                javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(5));
+                pause.setOnFinished(e -> sprintNotification.setVisible(false));
+                pause.play();
+            }
+        });
+
+    }
+
+    private void startSprintTimer() {
+        sprintStartTime = System.currentTimeMillis();
+
+        sprintTimer = new javafx.animation.Timeline(
+                new javafx.animation.KeyFrame(javafx.util.Duration.millis(100), e -> updateTimerDisplay())
+        );
+        sprintTimer.setCycleCount(javafx.animation.Animation.INDEFINITE);
+        sprintTimer.play();
+    }
+
+    private void updateTimerDisplay() {
+        if (timerLabel != null && sprintTarget > 0) {
+            long elapsed = System.currentTimeMillis() - sprintStartTime;
+            long seconds = (elapsed / 1000) % 60;
+            long minutes = (elapsed / 1000) / 60;
+            long millis = (elapsed % 1000) / 10;
+            timerLabel.setText(String.format("Time: %02d:%02d.%02d", minutes, seconds, millis));
+        }
+    }
+
+    public void updateSprintProgress(int linesCleared, int target) {
+        if (sprintTarget > 0 && levelLabel != null) {
+            levelLabel.setText("Lines: " + linesCleared + "/" + target);
+        }
+    }
+
+    public void gameWon() {
+        if (gameLoop != null) gameLoop.stop();
+        if (sprintTimer != null) sprintTimer.stop();
+        currentState = new GameOverState();
+        updateStateDisplay();
+
+        long elapsed = System.currentTimeMillis() - sprintStartTime;
+        long seconds = (elapsed / 1000) % 60;
+        long minutes = (elapsed / 1000) / 60;
+        long millis = (elapsed % 1000) / 10;
+        String finalTime = String.format("%02d:%02d.%02d", minutes, seconds, millis);
+
+        javafx.application.Platform.runLater(() -> {
+            if (sprintNotification != null) {
+                sprintNotification.setText("YOU WIN! Time: " + finalTime);
+                sprintNotification.setVisible(true);
+                sprintNotification.setStyle("-fx-font-size: 24; -fx-text-fill: yellow; -fx-font-weight: bold; -fx-background-color: rgba(0,0,0,0.9); -fx-padding: 15; -fx-background-radius: 5;");
+            }
+
+            gameOverPanel.setVisible(true);
+        });
     }
 
 

@@ -20,14 +20,23 @@ public class HomeController {
     private final HighScore highScore = new HighScore();
 
     @FXML
-    public void startGame(ActionEvent event) {
+    public void startClassicGame(ActionEvent event) {
+        startGameWithMode(com.comp2042.model.GameMode.CLASSIC);
+    }
+
+    @FXML
+    public void startSprintGame(ActionEvent event) {
+        startGameWithMode(com.comp2042.model.GameMode.SPRINT);
+    }
+
+    private void startGameWithMode(com.comp2042.model.GameMode mode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("gameLayout.fxml"));
             Parent gameRoot = loader.load();
             GuiController guiController = loader.getController();
 
             Stage stage = (Stage) highScoreDisplay.getScene().getWindow();
-            Scene gameScene = new Scene(gameRoot, 300, 510);
+            Scene gameScene = new Scene(gameRoot, 600, 510);
             stage.setScene(gameScene);
 
             new GameController(guiController);
